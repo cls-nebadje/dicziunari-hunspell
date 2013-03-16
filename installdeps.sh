@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
 # Copyright (C) 2012-2013 Uli Franke (cls) et al.
@@ -22,39 +24,4 @@
 # Rhaeto-Romance language.
 #
 
-# http://kb.mozillazine.org/Dictionaries
-
-RM=rm -rf
-
-LANG=rm-vl
-
-# Sources
-AFFIX=$(LANG).aff
-
-# Outputs
-TARGET=$(LANG).dic
-WORDLISTS=$(LANG).wl
-DICTDB=$(LANG).db
-	
-$(TARGET): $(WORDLISTS) $(AFFIX)
-	munch $(WORDLISTS) $(AFFIX) > $@
-
-$(WORDLISTS): $(DICTDB)
-	./genwordlists.py
-
-$(DICTDB):
-	./gendatabase.sh
-
-
-all: $(TARGET)
-
-clean:
-	$(RM) $(TARGET) $(WORDLISTS)
-
-mr-proper: clean
-	$(RM) $(DICTDB)
-
-new: clean all
-
-install: $(TARGET)
-	sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
+sudo aptitude install hunspell hunspell-tools

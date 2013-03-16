@@ -23,10 +23,55 @@
 # permission, as they actively block software innovation targeting the
 # Rhaeto-Romance language.
 #
-import sys
+import sys, sqlite3, re, string
 
 def main():
+    
+    wl_dicz()   # Wordlist from dicziunari
+    
+    # Others would be great, like la muedada, gazettas, ...
+    # I checked google but there's no scanned version of la muedada    
     return 0
+
+# Finds masc/fem stuff
+RX_MF= re.compile(r'(.+?),\ -(.+?)')
+
+def wl_dicz_proc_row_entry(entry):
+#    m = RX_MF.findall(entry)
+#    for i in m:
+    
+    # Split on white space
+    return entry.split(" ")
+
+
+# Regex to erase punctuation
+RX_PUNCT = re.compile('[%s]' % re.escape(string.punctuation))
+
+def wl_dicz_proc_row(words, row):
+    if row[0] is not None:
+            for w in wl_dicz_proc_row_entry(row[0]):
+                nw = RX_PUNCT.sub('', w)
+                # TODO: If we have the row entry parsing ready: Warn if
+                # interpunctuation in word
+                # if len(w) != (w):
+                words.add(nw)
+
+def wl_dicz():
+    db = sqlite3.connect("rm-vl.db")
+    cur = db.cursor()
+    sql = "SELECT pled FROM dicziunari GROUP BY pled"
+    cur.execute(sql)
+    
+    words = set()
+    for row in cur.fetchall():
+        wl_dicz_proc_row(words, row)
+    
+    wl = open("rm-vl.wl", "w")
+    for w in words:
+        w = u"%s\n" % w
+        wl.write(w.encode("utf-8"))
+    wl.close()
+
 
 if __name__ == "__main__":
     sys.exit(main())
