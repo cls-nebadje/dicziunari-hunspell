@@ -27,6 +27,6 @@
 TMP=`pwd`
 cd ../../database
 ./dicziunari.py -v -s -c "{m:wort,T:beug,W:geschl,I:anmerk,n:pled,L:gener,R:annot}"
-mv Vallader.db ../idioms/vallader/rm-vl.db
+mv Vallader.db $TMP/$1
 
 cd $TMP

@@ -1,3 +1,4 @@
+#
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
 # Copyright (C) 2012-2013 Uli Franke (cls) et al.
@@ -22,45 +23,7 @@
 # Rhaeto-Romance language.
 #
 
-# http://kb.mozillazine.org/Dictionaries
+# Wikipedia
 
-RM=rm -rf
-SHELL=bash
+La vuolp d’eira darcheu üna jada fomantada. Qua ha’la vis sün ün pin ün corv chi tgnaiva ün toc chaschöl in seis pical. Quai am gustess, ha’la pensà, ed ha clomà al corv: „Che bel cha tü est! Scha teis chant es uschè bel sco tia apparentscha, lura est tü il plü bel utschè da tuots.
 
-LANG=rm-Vallader
-
-# Sources
-AFFIX=$(LANG).aff
-
-# Outputs
-TARGET=$(LANG).dic
-WORDLISTS=$(LANG).wl
-DICTDB=$(LANG).db
-	
-$(TARGET): $(WORDLISTS) $(AFFIX)
-	munch $(WORDLISTS) $(AFFIX) > $@
-
-$(WORDLISTS): $(DICTDB)
-	./genwordlists.py
-
-$(DICTDB):
-	./gendatabase.sh $@
-
-
-all: $(TARGET)
-
-clean:
-	$(RM) $(TARGET) $(WORDLISTS)
-
-mr-proper: clean
-	$(RM) $(DICTDB)
-
-new: clean all
-
-wordlists: clean $(WORDLISTS)
-
-install: $(TARGET)
-	sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
-	
-charprobab: $(WORDLISTS)
-	./charprob.py

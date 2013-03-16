@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
 # Copyright (C) 2012-2013 Uli Franke (cls) et al.
@@ -22,5 +24,27 @@
 # Rhaeto-Romance language.
 #
 
-SET UTF-8
+#
+# Character probability for 'TRY' statement in affix files
+#
 
+import re, string
+
+f = open("rm-Vallader.wl")
+data = f.read().decode("utf-8")
+f.close()
+
+# erase all punctuation, numbers, special characters
+others = u" \n\r\u2019\u2020"
+RX_PUNCT = re.compile('[%s]' % re.escape(string.punctuation+string.digits+others),
+                      re.MULTILINE)
+
+data = RX_PUNCT.sub('', data)
+
+chars = {}
+for c in data:
+    chars[c] = chars.get(c, 0) + 1
+
+chars = sorted(chars.items(), key=lambda (k,v): (v,k), reverse=True)
+
+print "".join([k for k, _ in chars])

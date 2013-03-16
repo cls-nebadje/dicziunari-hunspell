@@ -22,45 +22,9 @@
 # Rhaeto-Romance language.
 #
 
-# http://kb.mozillazine.org/Dictionaries
+SET UTF-8
 
-RM=rm -rf
-SHELL=bash
+# Note: We should generate the affix file from a template and set this
+#       value when we generated it from the word lists
+TRY airsntecluodmphgvbzfüàöxqjkSwGèABäTCMPFEVRLNDïKyHUòIZOWêJéâÜYôÄXQ
 
-LANG=rm-Vallader
-
-# Sources
-AFFIX=$(LANG).aff
-
-# Outputs
-TARGET=$(LANG).dic
-WORDLISTS=$(LANG).wl
-DICTDB=$(LANG).db
-	
-$(TARGET): $(WORDLISTS) $(AFFIX)
-	munch $(WORDLISTS) $(AFFIX) > $@
-
-$(WORDLISTS): $(DICTDB)
-	./genwordlists.py
-
-$(DICTDB):
-	./gendatabase.sh $@
-
-
-all: $(TARGET)
-
-clean:
-	$(RM) $(TARGET) $(WORDLISTS)
-
-mr-proper: clean
-	$(RM) $(DICTDB)
-
-new: clean all
-
-wordlists: clean $(WORDLISTS)
-
-install: $(TARGET)
-	sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
-	
-charprobab: $(WORDLISTS)
-	./charprob.py
