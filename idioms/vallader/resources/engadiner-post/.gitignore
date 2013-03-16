@@ -1,2 +1,3 @@
-pdf/
+pdf/*.pdf
+*.wl
 dl-engadiner-post.sh
