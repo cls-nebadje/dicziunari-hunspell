@@ -24,24 +24,49 @@
 
 # http://kb.mozillazine.org/Dictionaries
 
+TOOLSDIR=../../tools
+
 RM=rm -rf
 SHELL=bash
-
+PDFWL=$(TOOLSDIR)/pdf2wl.py
 LANG=rm-Vallader
 
 # Sources
 AFFIX=$(LANG).aff
 
+# pdf wordlist dirs
+RESDIR=resources
+PDFWORDLISTDIRS=$(RESDIR)/engadiner-post
+
 # Outputs
 TARGET=$(LANG).dic
-WORDLISTS=$(LANG).wl
+SEEDWORDLIST=$(LANG).wl
+PDFWORDLISTS=$(addsuffix /$(LANG).wl,$(PDFWORDLISTDIRS))
+WORDLISTS= $(SEEDWORDLIST) $(PDFWORDLISTS)
 DICTDB=$(LANG).db
-	
-$(TARGET): $(WORDLISTS) $(AFFIX)
-	munch $(WORDLISTS) $(AFFIX) > $@
 
-$(WORDLISTS): $(DICTDB)
+# Seed dict
+SEEDLANG=$(LANG)-seed
+SEEDDICT=$(SEEDLANG).dic
+SEEDAFF=$(SEEDLANG).aff
+
+$(TARGET): $(WORDLISTS) $(AFFIX)
+	cat $(WORDLISTS) > tmp.wl
+	munch tmp.wl $(AFFIX) > $@
+	rm tmp.wl
+
+$(SEEDAFF): $(AFFIX)
+	cp $< $@
+
+$(SEEDDICT): $(SEEDWORDLIST) $(SEEDAFF)
+	munch $^ > $@
+
+$(SEEDWORDLIST): $(DICTDB)
 	./genwordlists.py
+
+$(PDFWORDLISTS): $(SEEDDICT)
+	$(PDFWL) $(SEEDLANG) $(dir $@)pdf $(dir $@)$(LANG).wl
+	
 
 $(DICTDB):
 	./gendatabase.sh $@
@@ -50,7 +75,7 @@ $(DICTDB):
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) $(WORDLISTS)
+	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF)
 
 mr-proper: clean
 	$(RM) $(DICTDB)

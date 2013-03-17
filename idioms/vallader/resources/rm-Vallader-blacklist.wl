@@ -1,0 +1,2 @@
+informatiker
+informatikecra
