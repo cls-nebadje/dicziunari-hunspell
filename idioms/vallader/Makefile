@@ -24,15 +24,28 @@
 
 # http://kb.mozillazine.org/Dictionaries
 
+# Directories
 TOOLSDIR=../../tools
+TEMPLATEDIR=../../templates
 
+# Tools
 RM=rm -rf
 SHELL=bash
 PDFWL=$(TOOLSDIR)/pdf2wl.py
+
+# Meta/Version
 LANG=rm-Vallader
+VERSION=0.1.0
+NAME_EN=Rhaeto-Romance Dictionary (Vallader)
+DESC_EN=Rhaeto-Romance Dictionary (Vallader) 
+AUTH_EN=Uli Franke (cls)
+NAME_DE=Rätoromanisches Wörterbuch (Vallader)
+DESC_DE=Rätoromanisches Wörterbuch (Vallader) 
+AUTH_DE=$(AUTH_EN)
 
 # Sources
 AFFIX=$(LANG).aff
+INSTALLRDFTEMPLATE=$(TEMPLATEDIR)/install.rdf
 
 # pdf wordlist dirs
 RESDIR=resources
@@ -44,6 +57,7 @@ SEEDWORDLIST=$(LANG).wl
 PDFWORDLISTS=$(addsuffix /$(LANG).wl,$(PDFWORDLISTDIRS))
 WORDLISTS= $(SEEDWORDLIST) $(PDFWORDLISTS)
 DICTDB=$(LANG).db
+INSTALLRDF=install.rdf
 
 # Seed dict
 SEEDLANG=$(LANG)-seed
@@ -66,16 +80,26 @@ $(SEEDWORDLIST): $(DICTDB)
 
 $(PDFWORDLISTS): $(SEEDDICT)
 	$(PDFWL) $(SEEDLANG) $(dir $@)pdf $(dir $@)$(LANG).wl
-	
 
 $(DICTDB):
 	./gendatabase.sh $@
+
+$(INSTALLRDF): $(INSTALLRDFTEMPLATE)
+	sed -e "s/__LANG__/$(LANG)/g" \
+	    -e "s/__VERSION__/$(VERSION)/g" \
+	    -e "s/__NAME_EN__/$(NAME_EN)/g" \
+	    -e "s/__DESC_EN__/$(DESC_EN)/g" \
+	    -e "s/__AUTH_EN__/$(AUTH_EN)/g" \
+	    -e "s/__NAME_DE__/$(NAME_DE)/g" \
+	    -e "s/__DESC_DE__/$(DESC_DE)/g" \
+	    -e "s/__AUTH_DE__/$(AUTH_DE)/g" \
+	    $< > $@
 
 
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF)
+	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF)
 
 mr-proper: clean
 	$(RM) $(DICTDB)

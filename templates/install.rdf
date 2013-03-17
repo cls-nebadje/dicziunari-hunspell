@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 
-<!-- Template variables:
+<!-- Template variables (pre- and postfixed with double underscore (__):
 
-     __LANG__    : language, e.g. rm-Vallader
-     __VERSION__ : add on version, e.g. 2.0.3
-     __NAME_EN__ : human readable dictionary name english, e.g. Rhaeto-Romance Dictionary (Vallader)
-     __DESC_EN__ : description english
-     __AUTH_EN__ : author english
-     __NAME_DE__ : human readable dictionary name german, e.g. Rhätoromanisches Wörterbuch (Vallader)
-     __DESC_DE__ : decription german 
-     __AUTH_DE__ : author german
+     LANG    : language, e.g. rm-Vallader
+     VERSION : add on version, e.g. 2.0.3
+     NAME_EN : human readable dictionary name english, e.g. Rhaeto-Romance Dictionary (Vallader)
+     DESC_EN : description english
+     AUTH_EN : author english
+     NAME_DE : human readable dictionary name german, e.g. Rhätoromanisches Wörterbuch (Vallader)
+     DESC_DE : decription german 
+     AUTH_DE : author german
 -->
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
