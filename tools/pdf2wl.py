@@ -116,15 +116,35 @@ def processWords(words, newWords):
 RX_REPLACE_PDF_APOSTROPHE = re.compile(r'[%s]'%re.escape(u"\u2019"), re.UNICODE)
 
 def preprocessParagraph(p):
+    """ Apply some processing before splitting the paragraph into words.
+    Currently it just converts the pdf/engadiner-post typical apostrophe into
+    an apostrophe used within our hunspell dictionaries.
+    
+    @todo: Handle hyphenation within the paragraph. Examples I found in the
+           resulting wordlist: ["l'instru"]
+    """
     p = RX_REPLACE_PDF_APOSTROPHE.sub("'", p)
-    
-    # Agüd! Hyphenation! -> "l'instru" 
-    
     return p
     
-def isIdiom(seedDict, p, nWords):
+def isIdiom(seedDict, p, nWords, thresh=0.8):
+    """ Checks if the given paragraph is of the idiom/language defined by the
+    seed dictionary.
+    
+    @param seedDict: Path to a hunspell dictionary (consisting of .dic and .aff
+                     files). This seed dictionary determines the idiom/language
+                     to be detected.
+    @param p:        Paragraph to be checked
+    @param nWords:   Number of words within the paragraph
+    @param thresh:   Threshold at which a paragraph is considered to be of the
+                     language determined by seedDict. Must be in the range
+                     0.0 .. 1.0, whereas 0 means that no words are required to
+                     be correct, 1.0 that all words must be covered by the
+                     seedDict. 
+    """
+    
     if nWords <= 0:
         return False
+    
     f = tempfile.NamedTemporaryFile()
     f.write(p.encode("utf-8"))
     f.flush()
@@ -132,11 +152,16 @@ def isIdiom(seedDict, p, nWords):
     s, o = commands.getstatusoutput(cmd)
     if s != 0:
         return False
-    o = o.decode("utf-8")
+    try:
+        o = o.decode("utf-8")
+    except Exception as e:
+        print >> sys.stderr, "Failed to decode hunspell output: %s" % (str(e))
+        return False
+    
     nMisspelled = len(o.splitlines())
     ratio = float(nWords - nMisspelled) / float(nWords)
     
-    res = ratio > 0.8
+    res = ratio > thresh
     if res:
         print "%3i%% - %i words" % (int(ratio*100), nWords)
     return res
