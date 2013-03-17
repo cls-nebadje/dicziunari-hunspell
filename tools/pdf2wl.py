@@ -24,7 +24,20 @@
 # permission, as they actively block software innovation targeting the
 # Rhaeto-Romance language.
 
+""" Program to expand the dictionary of a language defined by a so called
+"seed dictionary" by extracting paragraphs from pdfs an guessing the
+language of each paragraph and add the words of those paragraphs to the
+language's dictionary.
+"""
+
 import sys, os, re, tempfile, commands
+
+# Minimum size of a paragraph to be considered at all.
+MIN_SIZE_PARAGRAPH = 1000
+
+# Minimum ratio of misspelled words compared to correctly spelled words in
+# order to consider the paragraph being of the given language 
+MIN_RATIO_PARAGRAPH_ACCEPT = 0.8
 
 def main():
 
@@ -60,11 +73,13 @@ def main():
     wl.close()
     
     return 0
-    
+
+# Regex to split words but keeping apostrophed stuff intact
 RX_WORD_SPLIT = re.compile(r'\w+(?:\'\w+)*', re.UNICODE)
 
 def processPdf(seedDict, path):
-    
+    """
+    """
     words = set()
     
     txtFile = tempfile.NamedTemporaryFile()
@@ -86,7 +101,7 @@ def processPdf(seedDict, path):
     for line in lines:
         if len(line) == 0:
             p = " ".join(p)
-            if len(p) > 1000:   # only consider substantial paragraphs
+            if len(p) > MIN_SIZE_PARAGRAPH:   # only consider substantial paragraphs
                 p = preprocessParagraph(p)
                 pWords = RX_WORD_SPLIT.findall(p)
                 N = len(pWords)
@@ -101,6 +116,7 @@ def processPdf(seedDict, path):
     
     return words
 
+# Detect words composed solely of digits (years, telephone numbers, ...)
 RX_NUMBER = re.compile(r'^[0-9]+$', re.UNICODE)
 
 def processWords(words, newWords):
@@ -111,8 +127,7 @@ def processWords(words, newWords):
             continue
         words.add(w)
 
-# Pdf to text produces the \u2019 apostrophe but we're using "'", so we have to
-# replace it 
+# Pdf to text produces the \u2019 apostrophe but we use "'" -> replace
 RX_REPLACE_PDF_APOSTROPHE = re.compile(r'[%s]'%re.escape(u"\u2019"), re.UNICODE)
 
 def preprocessParagraph(p):
@@ -126,7 +141,7 @@ def preprocessParagraph(p):
     p = RX_REPLACE_PDF_APOSTROPHE.sub("'", p)
     return p
     
-def isIdiom(seedDict, p, nWords, thresh=0.8):
+def isIdiom(seedDict, p, nWords, thresh=MIN_RATIO_PARAGRAPH_ACCEPT):
     """ Checks if the given paragraph is of the idiom/language defined by the
     seed dictionary.
     
