@@ -39,6 +39,8 @@ MIN_SIZE_PARAGRAPH = 1000
 # order to consider the paragraph being of the given language 
 MIN_RATIO_PARAGRAPH_ACCEPT = 0.8
 
+MAX_NUM_PDF = 1
+
 def main():
 
     if len(sys.argv) < 4:
@@ -48,13 +50,12 @@ def main():
     pdfDir      = sys.argv[2]
     outFilePath = sys.argv[3]
 
-    N = 1000  # Number of pdfs to analyze
-    i = 0
     
     words = set()
     
+    i = 0
     files = os.listdir(pdfDir)
-    N = min(N, len(files))
+    N = min(MAX_NUM_PDF, len(files))
     for p in files:
         i += 1
         if i > N:

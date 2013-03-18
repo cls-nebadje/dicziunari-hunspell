@@ -28,23 +28,37 @@
 # Character probability for 'TRY' statement in affix files
 #
 
-import re, string
+import sys, re, string
 
-f = open("rm-Vallader.wl")
-data = f.read().decode("utf-8")
-f.close()
+def main():
+    
+    if len(sys.argv) < 2:
+        print >> sys.stderr, "Too few arguments."
+        return 1
+    
+    wlPaths = sys.argv[1:]
 
-# erase all punctuation, numbers, special characters
-others = u" \n\r\u2019\u2020"
-RX_PUNCT = re.compile('[%s]' % re.escape(string.punctuation+string.digits+others),
-                      re.MULTILINE)
+    chars = {}
+    for wlPath in wlPaths:
+        f = open(wlPath)
+        data = f.read().decode("utf-8")
+        f.close()
+        
+        # erase all punctuation, numbers, special characters
+        others = u" \n\r\u2019\u2020"
+        RX_PUNCT = re.compile('[%s]' % re.escape(string.punctuation+string.digits+others),
+                              re.MULTILINE | re.UNICODE)
+        
+        data = RX_PUNCT.sub('', data)
+        
+        for c in data:
+            chars[c] = chars.get(c, 0) + 1
+        
+    chars = sorted(chars.items(), key=lambda (k,v): (v,k), reverse=True)
+    
+    print u"".join([k for k, _ in chars]).encode("utf-8")
+    
+    return 0
 
-data = RX_PUNCT.sub('', data)
-
-chars = {}
-for c in data:
-    chars[c] = chars.get(c, 0) + 1
-
-chars = sorted(chars.items(), key=lambda (k,v): (v,k), reverse=True)
-
-print "".join([k for k, _ in chars])
+if __name__ == "__main__":
+    sys.exit(main())
