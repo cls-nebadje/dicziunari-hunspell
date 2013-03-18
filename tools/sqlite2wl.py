@@ -27,18 +27,59 @@ import sys, sqlite3, re, string
 
 def main():
     
-    wl_dicz()   # Wordlist from dicziunari
+    if len(sys.argv) < 3:
+        print >> sys.stderr, "Too few arguments."
+        return 1
     
-    # Others would be great, like la muedada, gazettas, ...
-    # I checked google but there's no scanned version of la muedada    
+    dbPath = sys.argv[1]
+    wlPath = sys.argv[2]
+    
+    # TODO get DB file name and output file name from command line arguments...
+    db = sqlite3.connect(dbPath)
+    cur = db.cursor()
+    sql = "SELECT pled FROM dicziunari GROUP BY pled"
+    cur.execute(sql)
+    
+    # We use a set to get unique entries
+    words = set()
+    for row in cur.fetchall():
+        wl_dicz_proc_row(words, row)
+    
+    wl = open(wlPath, "w")
+    for w in words:
+        w = u"%s\n" % w
+        wl.write(w.encode("utf-8"))
+    wl.close()
+    
     return 0
 
+def wl_dicz_proc_masc_fem(words, stem, femfin):
+    words.add(stem)
+    # Experimental masc plural:
+    if stem[-1] != "s":
+        words.add(stem + "s")
+    # Compute feminin
+    if femfin in ['a', 'ta', 'za', 'la']:
+        fem = stem + femfin
+        words.add(fem)
+        words.add(fem + "s")
+    else:
+        f = femfin[0]
+        p = stem.rfind(f)
+        fem = stem[:p] + femfin
+        words.add(fem)
+        # Experimental fem plural:
+        if stem[-1] != "s":
+            words.add(fem + "s")               
+
+    
 # Finds masc/fem pairs
 RX_MF     = re.compile(r'(\S+?),\s+-(\S+?)(?=\s|$)')
 RX_MF_DEL = re.compile(r'(\S+?,\s+-\S+?)(?=\s|$)')
 
+
 def wl_dicz_proc_row_entry(entry):
-    words = []
+    words = set()
     
     # Remove german cross references
     if entry.startswith("cf. "):
@@ -49,31 +90,16 @@ def wl_dicz_proc_row_entry(entry):
     if len(m):
 #        print "a:", entry
         for stem, femfin in m:
-            words.append(stem)
-            # Experimental masc plural:
-            if stem[-1] != "s":
-                words.append(stem + "s")
-            # Compute feminin
-            if femfin in ['a', 'ta', 'za', 'la']:
-                fem = stem + femfin
-                words.append(fem)
-                words.append(fem + "s")
-            else:
-                f = femfin[0]
-                p = stem.rfind(f)
-                fem = stem[:p] + femfin
-                words.append(fem)
-                # Experimental fem plural:
-                if stem[-1] != "s":
-                    words.append(fem + "s")               
-            
+            wl_dicz_proc_masc_fem(words, stem, femfin)
         # As we extracted the words we have to delete them from the entry
         entry = RX_MF_DEL.sub(' ', entry)
     
     # Add remaining words
     entry = entry.strip()
     if len(entry) > 0:
-        words += entry.split(" ") 
+        for w in entry.split(" "):
+            words.add(w)
+ 
     # Split on white space
     return words
 
@@ -87,25 +113,6 @@ def wl_dicz_proc_row(words, row):
             nw = RX_PUNCT.sub('', w).strip()
             if len(nw) > 0:
                 words.add(nw)
-
-def wl_dicz():
-    # TODO get DB file name and output file name from command line arguments...
-    db = sqlite3.connect("rm-Vallader.db")
-    cur = db.cursor()
-    sql = "SELECT pled FROM dicziunari GROUP BY pled"
-    cur.execute(sql)
-    
-    # We use a set to get unique entries
-    words = set()
-    for row in cur.fetchall():
-        wl_dicz_proc_row(words, row)
-    
-    wl = open("rm-Vallader.wl", "w")
-    for w in words:
-        w = u"%s\n" % w
-        wl.write(w.encode("utf-8"))
-    wl.close()
-
 
 if __name__ == "__main__":
     sys.exit(main())
