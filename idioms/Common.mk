@@ -112,17 +112,24 @@ new: clean all
 
 wordlists: clean $(WORDLISTS)
 
+# sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
 install: $(XPI)
-	#sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
 	for d in `find ~/.thunderbird/ -name "*.default"`; do \
 		mkdir -p $$d/extensions/$(ID)/;                   \
 		unzip $(XPI) -d $$d/extensions/$(ID)/ ;           \
 	done
+	for d in `find ~/.mozilla/firefox/ -name "*.default"`; do \
+		mkdir -p $$d/extensions/$(ID)/;                       \
+		unzip $(XPI) -d $$d/extensions/$(ID)/ ;               \
+	done
 
+# sudo rm /usr/lib/thunderbird/dictionaries/$(LANG)*
 uninstall:
-	#sudo rm /usr/lib/thunderbird/dictionaries/$(LANG)*
 	for d in `find ~/.thunderbird/ -name "*.default"`; do \
 		rm -rf $$d/extensions/$(ID);                      \
+	done
+	for d in `find ~/.mozilla/firefox/ -name "*.default"`; do \
+		rm -rf $$d/extensions/$(ID);                          \
 	done
 	
 charprobab: $(WORDLISTS)
