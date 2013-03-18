@@ -2,7 +2,7 @@
 
 <!-- Template variables (pre- and postfixed with double underscore (__):
 
-     LANG    : language, e.g. rm-Vallader
+     ID      : rm-Vallader@dictionaries.addons.mozilla.org
      VERSION : add on version, e.g. 2.0.3
      NAME_EN : human readable dictionary name english, e.g. Rhaeto-Romance Dictionary (Vallader)
      DESC_EN : description english
@@ -15,7 +15,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>__LANG__@dictionaries.addons.mozilla.org</em:id>
+    <em:id>__ID__</em:id>
     <em:type>64</em:type>
     <em:version>__VERSION__</em:version>
     <em:name>__NAME_EN__</em:name>

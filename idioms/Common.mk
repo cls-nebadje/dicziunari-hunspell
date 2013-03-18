@@ -46,6 +46,7 @@ PDFWORDLISTS=$(addsuffix /$(LANG).wl,$(PDFWORDLISTDIRS))
 WORDLISTS= $(SEEDWORDLIST) $(PDFWORDLISTS)
 DICTDB=$(LANG).db
 INSTALLRDF=install.rdf
+XPI=$(LANG).xpi
 
 # Seed dict
 SEEDLANG=$(LANG)-seed
@@ -53,6 +54,14 @@ SEEDDICT=$(SEEDLANG).dic
 SEEDAFF=$(SEEDLANG).aff
 
 CP=$(shell $(CHARPROB) $(WORDLISTS))
+
+$(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF)
+	rm -rf .tmp
+	mkdir -p .tmp/dictionaries
+	cp $(INSTALLRDF) .tmp/
+	cp $(TARGET) $(AFFIX) .tmp/dictionaries/
+	cd .tmp; zip ../$@ -r *; cd ..
+	rm -rf .tmp
 
 $(TARGET): $(WORDLISTS) $(AFFIX)
 	# Add char probability to affix file
@@ -76,8 +85,11 @@ $(PDFWORDLISTS): $(SEEDDICT)
 $(DICTDB):
 	$(MAKEDB) $@
 
+# XPI package ID
+ID=$(LANG)@dictionaries.addons.mozilla.org
+
 $(INSTALLRDF): $(INSTALLRDFTEMPLATE)
-	sed -e "s/__LANG__/$(LANG)/g" \
+	sed -e "s/__ID__/$(ID)/g" \
 	    -e "s/__VERSION__/$(VERSION)/g" \
 	    -e "s/__NAME_EN__/$(NAME_EN)/g" \
 	    -e "s/__DESC_EN__/$(DESC_EN)/g" \
@@ -91,7 +103,7 @@ $(INSTALLRDF): $(INSTALLRDFTEMPLATE)
 all: $(TARGET)
 
 clean:
-	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF)
+	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF) $(XPI)
 
 mr-proper: clean
 	$(RM) $(DICTDB)
@@ -100,8 +112,18 @@ new: clean all
 
 wordlists: clean $(WORDLISTS)
 
-install: $(TARGET)
-	sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
+install: $(XPI)
+	#sudo cp $(AFFIX) $(TARGET) /usr/lib/thunderbird/dictionaries/
+	for d in `find ~/.thunderbird/ -name "*.default"`; do \
+		mkdir -p $$d/extensions/$(ID)/;                   \
+		unzip $(XPI) -d $$d/extensions/$(ID)/ ;           \
+	done
+
+uninstall:
+	#sudo rm /usr/lib/thunderbird/dictionaries/$(LANG)*
+	for d in `find ~/.thunderbird/ -name "*.default"`; do \
+		rm -rf $$d/extensions/$(ID);                      \
+	done
 	
 charprobab: $(WORDLISTS)
 	$(CHARPROB) $^
