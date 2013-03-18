@@ -26,6 +26,7 @@
 TOOLSDIR=../../tools
 TEMPLATEDIR=../../templates
 RESDIR=resources
+BLACKLISTDIR=$(RESDIR)/blacklists
 
 # Tools
 RM=rm -rf
@@ -34,10 +35,12 @@ SQLITEWL=$(TOOLSDIR)/sqlite2wl.py
 PDFWL=$(TOOLSDIR)/pdf2wl.py
 MAKEDB=./makedb.sh
 CHARPROB=$(TOOLSDIR)/charprob.py
+BL=$(TOOLSDIR)/blacklist.py
 
 # Sources
 AFFIX=$(LANG).aff
 INSTALLRDFTEMPLATE=$(TEMPLATEDIR)/install.rdf
+BLACKLISTS=$(shell ls $(BLACKLISTDIR)/*.wl)
 
 # Outputs
 TARGET=$(LANG).dic
@@ -63,10 +66,11 @@ $(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF)
 	cd .tmp; zip ../$@ -r *; cd ..
 	rm -rf .tmp
 
-$(TARGET): $(WORDLISTS) $(AFFIX)
+$(TARGET): $(WORDLISTS) $(AFFIX) $(BLACKLISTS)
 	# Add char probability to affix file
 	# echo "$(CP)"
 	cat $(WORDLISTS) > tmp.wl
+	$(BL) tmp.wl tmp.wl $(BLACKLISTS)
 	munch tmp.wl $(AFFIX) > $@
 	rm tmp.wl
 
@@ -100,7 +104,7 @@ $(INSTALLRDF): $(INSTALLRDFTEMPLATE)
 	    $< > $@
 
 
-all: $(TARGET)
+all: $(XPI)
 
 clean:
 	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF) $(XPI)

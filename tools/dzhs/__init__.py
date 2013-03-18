@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
@@ -23,8 +24,4 @@
 # Rhaeto-Romance language.
 #
 
-# NOTE: informatiker, -cra
-informatikecra
-eretikecras
-usche
-usché
+# dzhs - Dicziunari Hunspell Python Module

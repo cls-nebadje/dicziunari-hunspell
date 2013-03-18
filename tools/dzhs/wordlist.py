@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
@@ -23,8 +24,21 @@
 # Rhaeto-Romance language.
 #
 
-# NOTE: informatiker, -cra
-informatikecra
-eretikecras
-usche
-usché
+# Word list methods
+
+def load(path):
+    f = open(path)
+    lines = f.read().decode("utf-8").splitlines()
+    f.close
+    l = set()
+    for i in lines:
+        if not i.startswith(u"#"):
+            l.add(i)
+    return l
+
+def store(path, l):
+    f = open(path, "w")
+    for w in l:
+        w = u"%s\n" % w
+        f.write(w.encode("utf-8"))
+    f.close()

@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
@@ -23,8 +24,33 @@
 # Rhaeto-Romance language.
 #
 
-# NOTE: informatiker, -cra
-informatikecra
-eretikecras
-usche
-usché
+""" Blacklist filter a word list with black lists and output a new word list
+"""
+import sys, dzhs.wordlist as wordlist
+
+def main():
+    """ """
+    if len(sys.argv) < 4:
+        print >> sys.stderr, "Invalid argument count: Usage <out> <bl> <wl>"
+        return 1
+    outPath  = sys.argv[1]
+    wlPath   = sys.argv[2]
+    blPaths   = sys.argv[3:]
+    
+    wl = wordlist.load(wlPath)
+    N = len(wl)
+    
+    for blPath in blPaths:
+        bl = wordlist.load(blPath)
+        wl = wl.difference(bl)
+
+    B = N - len(wl)
+    print "Blacklisted %i words." % (B)
+            
+    wordlist.store(outPath, wl)
+
+    return 0
+    
+if __name__ == "__main__":
+    sys.exit(main())
+

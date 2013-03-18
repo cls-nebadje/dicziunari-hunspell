@@ -30,7 +30,7 @@ language of each paragraph and add the words of those paragraphs to the
 language's dictionary.
 """
 
-import sys, os, re, tempfile, commands
+import sys, os, re, tempfile, commands, dzhs.wordlist as wordlist
 
 # Minimum size of a paragraph to be considered at all.
 MIN_SIZE_PARAGRAPH = 1000
@@ -68,9 +68,7 @@ def main():
             
     # TODO: Remove german words by applying a german hunspell ditionary
     
-    wl = open(outFilePath, "w")
-    wl.writelines([("%s\n"%w).encode("utf-8") for w in words])
-    wl.close()
+    wordlist.store(outFilePath, words)
     
     return 0
 

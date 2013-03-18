@@ -22,9 +22,3 @@
 # permission, as they actively block software innovation targeting the
 # Rhaeto-Romance language.
 #
-
-# NOTE: informatiker, -cra
-informatikecra
-eretikecras
-usche
-usché

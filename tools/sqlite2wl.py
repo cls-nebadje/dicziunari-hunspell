@@ -23,7 +23,7 @@
 # permission, as they actively block software innovation targeting the
 # Rhaeto-Romance language.
 #
-import sys, sqlite3, re, string
+import sys, sqlite3, re, string, dzhs.wordlist as wordlist
 
 def main():
     
@@ -45,19 +45,20 @@ def main():
     for row in cur.fetchall():
         wl_dicz_proc_row(words, row)
     
-    wl = open(wlPath, "w")
-    for w in words:
-        w = u"%s\n" % w
-        wl.write(w.encode("utf-8"))
-    wl.close()
+    wordlist.store(wlPath, words)
     
     return 0
 
 def wl_dicz_proc_masc_fem(words, stem, femfin):
+    
     words.add(stem)
+    
+    # NOTE VALLADER: informatiker, -cra
+    
     # Experimental masc plural:
     if stem[-1] != "s":
         words.add(stem + "s")
+        
     # Compute feminin
     if femfin in ['a', 'ta', 'za', 'la']:
         fem = stem + femfin
