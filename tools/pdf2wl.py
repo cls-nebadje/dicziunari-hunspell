@@ -39,11 +39,7 @@ MIN_SIZE_PARAGRAPH = 1000
 # order to consider the paragraph being of the given language 
 MIN_RATIO_PARAGRAPH_ACCEPT = 0.8
 
-<<<<<<< HEAD
 MAX_NUM_PDF = 1000
-=======
-MAX_NUM_PDF = 1
->>>>>>> f8ddc76c8a717c633d2a2a7c77e5e8fa504f10b6
 
 def main():
 
@@ -54,7 +50,6 @@ def main():
     pdfDir      = sys.argv[2]
     outFilePath = sys.argv[3]
 
-    
     words = set()
     
     i = 0
