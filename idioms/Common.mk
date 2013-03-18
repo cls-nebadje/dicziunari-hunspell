@@ -32,7 +32,7 @@ RM=rm -rf
 SHELL=bash
 SQLITEWL=$(TOOLSDIR)/sqlite2wl.py
 PDFWL=$(TOOLSDIR)/pdf2wl.py
-MAKEDB=makedb.sh
+MAKEDB=./makedb.sh
 CHARPROB=$(TOOLSDIR)/charprob.py
 
 # Sources
