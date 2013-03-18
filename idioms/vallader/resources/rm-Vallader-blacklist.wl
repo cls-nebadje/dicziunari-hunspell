@@ -1,3 +1,0 @@
-informatiker
-informatikecra
-eretikecras
