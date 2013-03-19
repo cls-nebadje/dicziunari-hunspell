@@ -31,9 +31,15 @@ VERSION=0.1.0
 NAME_EN=Rhaeto-Romance Dictionary (Vallader)
 DESC_EN=Rhaeto-Romance Dictionary (Vallader) 
 AUTH_EN=Uli Franke (cls)
+CONTRIB_EN=
+DEVEL_EN=$(AUTH_EN)
+TRANS_EN=
 NAME_DE=Rätoromanisches Wörterbuch (Vallader)
 DESC_DE=Rätoromanisches Wörterbuch (Vallader) 
 AUTH_DE=$(AUTH_EN)
+CONTRIB_DE=$(CONTRIB_EN)
+DEVEL_DE=$(DEVEL_EN)
+TRANS_DE=$(TRANS_EN)
 
 # Resources
 PDFWORDLISTDIRS=$(RESDIR)/engadiner-post
