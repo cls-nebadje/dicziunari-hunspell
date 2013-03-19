@@ -35,7 +35,7 @@ txt = """<a target="_blank" href="http://dsb.engadinerpost.ch/upload/DSBUserFile
     
 import re
 
-RX = re.compile(r'(http://\S+?.pdf)')
+RX = re.compile(r'(http://\S+?.pdf)', re.MULTILINE)
   
 sh = open("dl-engadiner-post.sh", "w")
 
