@@ -25,6 +25,7 @@
 # Directories
 TOOLSDIR=../../tools
 TEMPLATEDIR=../../templates
+GLOBALRESDIR=../../resources
 RESDIR=resources
 BLACKLISTDIR=$(RESDIR)/blacklists
 
@@ -41,6 +42,7 @@ BL=$(TOOLSDIR)/blacklist.py
 AFFIX=$(LANG).aff
 INSTALLRDFTEMPLATE=$(TEMPLATEDIR)/install.rdf
 BLACKLISTS=$(shell ls $(BLACKLISTDIR)/*.wl)
+ICON=$(GLOBALRESDIR)/icon.png
 
 # Outputs
 TARGET=$(LANG).dic
@@ -58,10 +60,11 @@ SEEDAFF=$(SEEDLANG).aff
 
 CP=$(shell $(CHARPROB) $(WORDLISTS))
 
-$(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF)
+$(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF) $(ICON)
 	rm -rf .tmp
 	mkdir -p .tmp/dictionaries
 	cp $(INSTALLRDF) .tmp/
+	cp $(ICON) .tmp/
 	cp $(TARGET) $(AFFIX) .tmp/dictionaries/
 	cd .tmp; zip ../$@ -r *; cd ..
 	rm -rf .tmp
@@ -120,11 +123,11 @@ wordlists: clean $(WORDLISTS)
 install: $(XPI)
 	for d in `find ~/.thunderbird/ -name "*.default"`; do \
 		mkdir -p $$d/extensions/$(ID)/;                   \
-		unzip $(XPI) -d $$d/extensions/$(ID)/ ;           \
+		unzip -o $(XPI) -d $$d/extensions/$(ID)/ ;           \
 	done
 	for d in `find ~/.mozilla/firefox/ -name "*.default"`; do \
 		mkdir -p $$d/extensions/$(ID)/;                       \
-		unzip $(XPI) -d $$d/extensions/$(ID)/ ;               \
+		unzip -o $(XPI) -d $$d/extensions/$(ID)/ ;               \
 	done
 
 # sudo rm /usr/lib/thunderbird/dictionaries/$(LANG)*

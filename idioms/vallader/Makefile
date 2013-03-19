@@ -23,6 +23,7 @@
 #
 
 # http://kb.mozillazine.org/Dictionaries
+# https://developer.mozilla.org/en-US/docs/Creating_a_spell_check_dictionary_add-on
 
 # Meta/Version
 LANG=rm-Vallader
