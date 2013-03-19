@@ -28,3 +28,6 @@ informatikecra
 eretikecras
 usche
 usché
+ualità
+l'apperitiv
+Unterwegs

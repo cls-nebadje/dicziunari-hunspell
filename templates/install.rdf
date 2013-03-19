@@ -26,14 +26,20 @@
 
      Template variables (pre- and postfixed with double underscore (__):
 
-     ID      : rm-Vallader@dictionaries.addons.mozilla.org
-     VERSION : add on version, e.g. 2.0.3
-     NAME_EN : human readable dictionary name english, e.g. Rhaeto-Romance Dictionary (Vallader)
-     DESC_EN : description english
-     AUTH_EN : author english
-     NAME_DE : human readable dictionary name german, e.g. Rhätoromanisches Wörterbuch (Vallader)
-     DESC_DE : decription german 
-     AUTH_DE : author german
+     ID         : rm-Vallader@dictionaries.addons.mozilla.org
+     VERSION    : add on version, e.g. 2.0.3
+     NAME_EN    : human readable dictionary name english, e.g. Rhaeto-Romance Dictionary (Vallader)
+     DESC_EN    : description english
+     AUTH_EN    : author english
+     CONTRIB_EN : contributor english
+     DEVEL_EN   : developer english
+     TRANS_EN   : translator english
+     NAME_DE    : human readable dictionary name german, e.g. Rhätoromanisches Wörterbuch (Vallader)
+     DESC_DE    : decription german 
+     AUTH_DE    : author german
+     CONTRIB_DE : contributor german
+     DEVEL_DE   : developer german
+     TRANS_DE   : translator german
 -->
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -45,6 +51,9 @@
     <em:name>__NAME_EN__</em:name>
     <em:description>__DESC_EN__</em:description>
     <em:creator>__AUTH_EN__</em:creator>
+    <em:contributor>__CONTRIB_EN__</em:contributor>
+    <em:developer>__DEVEL_EN__</em:developer>
+    <em:translator>__TRANS_EN__</em:translator>
     <em:unpack>true</em:unpack>
     <em:localized>
       <Description>
@@ -52,6 +61,9 @@
         <em:name>__NAME_DE__</em:name>
         <em:description>__DESC_DE__</em:description>
         <em:creator>__AUTH_DE__</em:creator>
+        <em:contributor>__CONTRIB_DE__</em:contributor>
+        <em:developer>__DEVEL_DE__</em:developer>
+        <em:translator>__TRANS_DE__</em:translator>
       </Description>
     </em:localized>
     <!-- Firefox -->

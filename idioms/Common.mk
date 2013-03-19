@@ -23,11 +23,13 @@
 #
 
 # Directories
-TOOLSDIR=../../tools
-TEMPLATEDIR=../../templates
-GLOBALRESDIR=../../resources
+ROOTDIR=../..
+TOOLSDIR=$(ROOTDIR)/tools
+TEMPLATEDIR=$(ROOTDIR)/templates
+GLOBALRESDIR=$(ROOTDIR)/resources
 RESDIR=resources
 BLACKLISTDIR=$(RESDIR)/blacklists
+CUSTOMWLDIR=$(RESDIR)/wordlists
 
 # Tools
 RM=rm -rf
@@ -43,6 +45,8 @@ AFFIX=$(LANG).aff
 INSTALLRDFTEMPLATE=$(TEMPLATEDIR)/install.rdf
 BLACKLISTS=$(shell ls $(BLACKLISTDIR)/*.wl)
 ICON=$(GLOBALRESDIR)/icon.png
+LICENSE=$(ROOTDIR)/LICENSE
+CUSTOMWL=$(shell ls $(CUSTOMWLDIR)/*.wl)
 
 # Outputs
 TARGET=$(LANG).dic
@@ -60,19 +64,20 @@ SEEDAFF=$(SEEDLANG).aff
 
 CP=$(shell $(CHARPROB) $(WORDLISTS))
 
-$(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF) $(ICON)
+$(XPI): $(TARGET) $(AFFIX) $(INSTALLRDF) $(ICON) $(LICENSE)
 	rm -rf .tmp
 	mkdir -p .tmp/dictionaries
 	cp $(INSTALLRDF) .tmp/
 	cp $(ICON) .tmp/
+	cp $(LICENSE) .tmp/
 	cp $(TARGET) $(AFFIX) .tmp/dictionaries/
 	cd .tmp; zip ../$@ -r *; cd ..
-	rm -rf .tmp
+	$(RM) .tmp
 
-$(TARGET): $(WORDLISTS) $(AFFIX) $(BLACKLISTS)
+$(TARGET): $(WORDLISTS) $(CUSTOMWL) $(AFFIX) $(BLACKLISTS)
 	# Add char probability to affix file
 	# echo "$(CP)"
-	cat $(WORDLISTS) > tmp.wl
+	cat $(WORDLISTS) $(CUSTOMWL) > tmp.wl
 	$(BL) tmp.wl tmp.wl $(BLACKLISTS)
 	munch tmp.wl $(AFFIX) > $@
 	rm tmp.wl
@@ -101,16 +106,22 @@ $(INSTALLRDF): $(INSTALLRDFTEMPLATE)
 	    -e "s/__NAME_EN__/$(NAME_EN)/g" \
 	    -e "s/__DESC_EN__/$(DESC_EN)/g" \
 	    -e "s/__AUTH_EN__/$(AUTH_EN)/g" \
+	    -e "s/__CONTRIB_EN__/$(CONTRIB_EN)/g" \
+	    -e "s/__DEVEL_EN__/$(DEVEL_EN)/g" \
+	    -e "s/__TRANS_EN__/$(TRANS_EN)/g" \
 	    -e "s/__NAME_DE__/$(NAME_DE)/g" \
 	    -e "s/__DESC_DE__/$(DESC_DE)/g" \
 	    -e "s/__AUTH_DE__/$(AUTH_DE)/g" \
+	    -e "s/__CONTRIB_DE__/$(CONTRIB_DE)/g" \
+	    -e "s/__DEVEL_DE__/$(DEVEL_DE)/g" \
+	    -e "s/__TRANS_DE__/$(TRANS_DE)/g" \
 	    $< > $@
 
 
 all: $(XPI)
 
 clean:
-	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF) $(XPI)
+	$(RM) $(TARGET) $(WORDLISTS) $(SEEDDICT) $(SEEDAFF) $(INSTALLRDF) $(XPI) .tmp
 
 mr-proper: clean
 	$(RM) $(DICTDB)

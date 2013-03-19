@@ -20,28 +20,20 @@
 # way by the Lia Rumantscha (www.liarumantscha.ch/) without explicit
 # permission, as they actively block software innovation targeting the
 # Rhaeto-Romance language.
-#
 
-# http://kb.mozillazine.org/Dictionaries
-
-# Meta/Version
-LANG=rm-Puter
-VERSION=0.1.0
-NAME_EN=Rhaeto-Romance Dictionary (Puter)
-DESC_EN=Rhaeto-Romance Dictionary (Puter) 
-AUTH_EN=Uli Franke (cls), Jonas Meyer (jns)
-CONTRIB_EN=
-DEVEL_EN=$(AUTH_EN)
-TRANS_EN=
-NAME_DE=Rätoromanisches Wörterbuch (Puter)
-DESC_DE=Rätoromanisches Wörterbuch (Puter) 
-AUTH_DE=$(AUTH_EN)
-CONTRIB_DE=$(CONTRIB_EN)
-DEVEL_DE=$(DEVEL_EN)
-TRANS_DE=$(TRANS_EN)
-
-# Resources
-PDFWORDLISTDIRS=$(RESDIR)/engadiner-post
-
-include ../Common.mk
-
+Bos-cha
+vegnan
+trais-cha
+plazzas
+cumbinaziun
+experienza
+constituziun
+pitschens
+planisaziun
+# TODO: l‘ingrandimaint is Puter -> pdf2wl more restrictive
+l'ingrondimaint
+d'inflammaziuns.
+cumünalas
+publica
+Sent
+lündeschdi

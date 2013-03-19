@@ -1,3 +1,4 @@
+#
 # Dicziunari-Hunspell -- Rhaeto-Romance hunspell dictionary generation
 # 
 # Copyright (C) 2012-2013 Uli Franke (cls) et al.
@@ -22,26 +23,4 @@
 # Rhaeto-Romance language.
 #
 
-# http://kb.mozillazine.org/Dictionaries
-
-# Meta/Version
-LANG=rm-Puter
-VERSION=0.1.0
-NAME_EN=Rhaeto-Romance Dictionary (Puter)
-DESC_EN=Rhaeto-Romance Dictionary (Puter) 
-AUTH_EN=Uli Franke (cls), Jonas Meyer (jns)
-CONTRIB_EN=
-DEVEL_EN=$(AUTH_EN)
-TRANS_EN=
-NAME_DE=Rätoromanisches Wörterbuch (Puter)
-DESC_DE=Rätoromanisches Wörterbuch (Puter) 
-AUTH_DE=$(AUTH_EN)
-CONTRIB_DE=$(CONTRIB_EN)
-DEVEL_DE=$(DEVEL_EN)
-TRANS_DE=$(TRANS_EN)
-
-# Resources
-PDFWORDLISTDIRS=$(RESDIR)/engadiner-post
-
-include ../Common.mk
-
+l'aperitiv

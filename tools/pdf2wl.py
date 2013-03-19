@@ -37,7 +37,7 @@ MIN_SIZE_PARAGRAPH = 1000
 
 # Minimum ratio of misspelled words compared to correctly spelled words in
 # order to consider the paragraph being of the given language 
-MIN_RATIO_PARAGRAPH_ACCEPT = 0.8
+MIN_RATIO_PARAGRAPH_ACCEPT = 0.83
 
 MAX_NUM_PDF = 1000
 
@@ -51,6 +51,7 @@ def main():
     outFilePath = sys.argv[3]
 
     words = set()
+    hyphenations = set()
     
     i = 0
     files = os.listdir(pdfDir)
@@ -63,12 +64,14 @@ def main():
         be = os.path.splitext(p)
         if len(be) == 2 and be[1].lower() == ".pdf":
             print "Processing [%3i/%3i]: %s" % (i, N, p)
-            newWords = processPdf(seedDict, os.path.join(pdfDir, p))
+            newWords, newHyph = processPdf(seedDict, os.path.join(pdfDir, p))
             words = words.union(newWords)
+            hyphenations = hyphenations.union(newHyph)
             
     # TODO: Remove german words by applying a german hunspell ditionary
     
     wordlist.store(outFilePath, words)
+    wordlist.store(outFilePath+".hy", hyphenations)
     
     return 0
 
@@ -79,6 +82,7 @@ def processPdf(seedDict, path):
     """
     """
     words = set()
+    hyphenations = []
     
     txtFile = tempfile.NamedTemporaryFile()
     s, o = commands.getstatusoutput("pdftotext %s %s" % (path, txtFile.name))
@@ -98,12 +102,15 @@ def processPdf(seedDict, path):
     p = []
     for line in lines:
         if len(line) == 0:
-            p = " ".join(p)
+            p = u"\n".join(p)
             if len(p) > MIN_SIZE_PARAGRAPH:   # only consider substantial paragraphs
-                p = preprocessParagraph(p)
+                p, h = preprocessParagraph(p)
                 pWords = RX_WORD_SPLIT.findall(p)
                 N = len(pWords)
                 if isIdiom(seedDict, p, N):
+                    if len(h) > 0:
+                        print "Hyphenations removed:", h
+                        hyphenations += h
                     processWords(words, pWords)
             p = []
             continue
@@ -112,7 +119,7 @@ def processPdf(seedDict, path):
 
 #    print words
     
-    return words
+    return words, hyphenations
 
 # Detect words composed solely of digits (years, telephone numbers, ...)
 RX_NUMBER = re.compile(r'^[0-9]+$', re.UNICODE)
@@ -125,19 +132,32 @@ def processWords(words, newWords):
             continue
         words.add(w)
 
-# Pdf to text produces the \u2019 apostrophe but we use "'" -> replace
-RX_REPLACE_PDF_APOSTROPHE = re.compile(r'[%s]'%re.escape(u"\u2019"), re.UNICODE)
+# Pdf to text produces \u2019, \u2018 apostrophes but we use "'" -> replace
+RX_REPLACE_PDF_APOSTROPHE = re.compile(r'[%s]'%re.escape(u"\u2019\u2018"), re.UNICODE)
+RX_REPLACE_HYPHENS=re.compile(r'\s\S+-\n\S+\s', re.MULTILINE | re.UNICODE)
+RX_REPLACE_NEW_LINES=re.compile(r'\n+', re.MULTILINE | re.UNICODE)
 
 def preprocessParagraph(p):
     """ Apply some processing before splitting the paragraph into words.
     Currently it just converts the pdf/engadiner-post typical apostrophe into
     an apostrophe used within our hunspell dictionaries.
-    
-    @todo: Handle hyphenation within the paragraph. Examples I found in the
-           resulting wordlist: ["l'instru"]
     """
+    hyphenations = []
+    h = RX_REPLACE_HYPHENS.findall(p)
+    if len(h) > 0:
+        # We remove hyphenated words at line breaks as reverting hyphenation
+        # is error prone. We could collect them separately and add them
+        # manually ...
+        p = RX_REPLACE_HYPHENS.sub(" ", p)
+        for i in h:
+            i = i.strip()
+            i = i.replace("\n", "")
+            i = RX_REPLACE_PDF_APOSTROPHE.sub("'", i)
+            if len(i) > 0:
+                hyphenations.append(i)
+    p = RX_REPLACE_NEW_LINES.sub(" ", p)
     p = RX_REPLACE_PDF_APOSTROPHE.sub("'", p)
-    return p
+    return p, hyphenations
     
 def isIdiom(seedDict, p, nWords, thresh=MIN_RATIO_PARAGRAPH_ACCEPT):
     """ Checks if the given paragraph is of the idiom/language defined by the
